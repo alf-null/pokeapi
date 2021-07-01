@@ -30,3 +30,6 @@ If you want to request info, you'll need to point to ```{your_host}/api/v1/```, 
 For instance ```http://127.0.0.1:5000/api/v1/advantages/``` is the valid endpoint for requesting advantages comparations.
 
 Swagger will be available at ```http://127.0.0.1:5000/api/v1/``` and http://127.0.0.1:5000/api/v1/swagger.json is a JSON representation of the API Documentation
+
+#### Cache
+Since this API depents so much in requets, it saves the JSON response for move_types and pokemons to help speed up the transactions from second time and ahead
