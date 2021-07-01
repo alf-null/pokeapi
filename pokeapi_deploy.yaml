@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pokeapi
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      pokeapi: web
+  template:
+    metadata:
+      labels:
+        pokeapi: web
+    spec:
+      containers:
+      - name: pokeapic
+        image: atxmini/pokeapi:v1
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pokeapi-entrypoint
+  namespace: default
+spec:
+  type: NodePort
+  selector:
+    pokeapi: web
+  ports:
+  - port: 5000
+    targetPort: 5000
+    nodePort: 3000
