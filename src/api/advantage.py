@@ -17,13 +17,13 @@ arg_parse = RequestParser()
 arg_parse.add_argument(
     name="first_type",
     required=True, 
-    location='json',
+    location="form",
     help='''Contains first and second pokemon types respectively'''
 )
 arg_parse.add_argument(
     name="second_type",
     required=True, 
-    location='json',
+    location="form",
     help='''Contains first and second pokemon types respectively'''
 )
 
@@ -38,7 +38,6 @@ def verify_types(data_model: AdvantageTypes) -> bool:
             types_list = json.load(types_json)
             for type_item in types_list['results']:
                 if data_model.first_type not in type_item['name'] or data_model.second_type not in type_item['name']:
-                    print(type_item['name'])
                     ret_value = True
     else:
         print("Missing type list from resources", file=stderr)
@@ -61,7 +60,7 @@ def verify_type_properties(data_model: AdvantageTypes) -> Dict:
                 response['double_damage_to'] =  True
                 break
         if 'double_damage_to' not in response:
-            response['double_damage_to'] = False
+            response['double_damage'] = False
 
         # Search if the second attack type can half damage
         for attack_type in type_list['damage_relations']["half_damage_from"]:
