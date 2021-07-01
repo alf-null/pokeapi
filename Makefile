@@ -19,7 +19,6 @@ install-test: install
 	pip install -qU -r requirements-test.txt
 
 test: clean install-test lint
-	pytest
 
 format:
 	$(isort)
