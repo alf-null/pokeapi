@@ -69,7 +69,7 @@ def Post(args: Dict) -> Any:
                 with open(pokemon_file, "wb") as new_pokemon_file:
                     new_pokemon_file.write(req.content)
             moves = get_moves(pokemon_file)
-            pokemon_moves[pokemon] = moves
+            pokemon_moves.append(moves)
 
     repeated = {}
     for move_set in pokemon_moves:
