@@ -1,14 +1,18 @@
-from flask_restplus import Resource, Namespace
+from flask_restplus import Namespace, Resource
+
 from .advantage import Post as AdvantagePost
 from .advantage import arg_parse as advantage_arg_parse
 from .moves import Post as MovesPost
 from .moves import arg_parse as moves_arg_parse
 
 advantage_ns = Namespace(
-    "advantages", description="Endpoint to determine which one have an advantage"
+    "advantages",
+    description="Endpoint to determine which one have an advantage",
 )
 
-moves_ns = Namespace("moves", description="Verify pokemon moves related transactions")
+moves_ns = Namespace(
+    "moves", description="Verify pokemon moves related transactions"
+)
 
 
 @advantage_ns.route("/")

@@ -1,6 +1,6 @@
 from os import environ
 
-from flask import Flask, Blueprint
+from flask import Blueprint, Flask
 from flask_restplus import Api
 
 from .api import advantage_ns as AdvantageType

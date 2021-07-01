@@ -1,6 +1,6 @@
 from dataclasses import dataclass
-from typing import List
 from numbers import Number
+from typing import List
 
 # Defines a class for easy work with request data
 

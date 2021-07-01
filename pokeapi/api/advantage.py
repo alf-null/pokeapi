@@ -1,17 +1,15 @@
 import json
-import requests
 import os
-from sys import stderr
 from os import path
+from sys import stderr
 from typing import Any, Dict
 
-
-from flask import jsonify
 import requests
-from ..schema.advantage import AdvantageTypesSchema
-from ..model.advantage import AdvantageTypes
-
+from flask import jsonify
 from flask_restplus.namespace import RequestParser
+
+from ..model.advantage import AdvantageTypes
+from ..schema.advantage import AdvantageTypesSchema
 
 arg_parse = RequestParser()
 arg_parse.add_argument(

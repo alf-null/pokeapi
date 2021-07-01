@@ -1,14 +1,13 @@
 import json
-import requests
 import os
 from typing import Any, Dict
 
-
-from ..schema.moves import MovesInCommonSchema
-from ..model.moves import MovesInCommon
-
+import requests
 from flask import jsonify
 from flask_restplus.namespace import RequestParser
+
+from ..model.moves import MovesInCommon
+from ..schema.moves import MovesInCommonSchema
 
 arg_parse = RequestParser()
 arg_parse.add_argument(
@@ -85,7 +84,9 @@ def Post(args: Dict) -> Any:
 
     if data_model.lan != "en":
         for i in range(len(common_moves)):
-            with requests.get(f"{pokeapi_base_uri}/move/{common_moves[i]}") as req:
+            with requests.get(
+                f"{pokeapi_base_uri}/move/{common_moves[i]}"
+            ) as req:
                 for name in req.json()["names"]:
                     if name["language"]["name"] == data_model.lan:
                         common_moves[i] = name["name"]
