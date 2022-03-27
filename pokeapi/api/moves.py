@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 from typing import Any, Dict
 
@@ -9,13 +10,13 @@ from flask_restplus.namespace import RequestParser
 from ..model.moves import MovesInCommon
 from ..schema.moves import ReqMovesInCommonSchema, ResMovesInCommonSchema
 
-import logging
-
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 ch = logging.StreamHandler()
 ch.setLevel(logging.DEBUG)
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+formatter = logging.Formatter(
+    '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
 ch.setFormatter(formatter)
 logger.addHandler(ch)
 
@@ -55,7 +56,7 @@ def get_moves(file: str):
 
 
 def Post(args: Dict) -> Any:
-    """Implement logic for matching moves on many pokemon"""    
+    """Implement logic for matching moves on many pokemon"""
     logger.info(f"Moves post: {args}")
     schema = ReqMovesInCommonSchema().load(args)
     data_model = MovesInCommon(**schema)
@@ -78,12 +79,14 @@ def Post(args: Dict) -> Any:
                     logger.warning(f"Pokemon {pokemon} not found")
                     pokemon_errors.append(pokemon)
                     continue
-                
+
                 try:
                     with open(pokemon_file, "wb") as new_pokemon_file:
                         new_pokemon_file.write(req.content)
                 except OSError:
-                    return make_response(jsonify(message="File management error"), 500)
+                    return make_response(
+                        jsonify(message="File management error"), 500
+                    )
             moves = get_moves(pokemon_file)
             pokemon_moves.append(moves)
 
@@ -109,6 +112,9 @@ def Post(args: Dict) -> Any:
                         common_moves[i] = name["name"]
 
     logger.info(f"Served response: {common_moves}")
-    response = jsonify(ResMovesInCommonSchema().dump({"shared_moves":common_moves, "processing_erros": pokemon_errors}))
+    response = jsonify(
+        ResMovesInCommonSchema().dump(
+            {"shared_moves": common_moves, "processing_erros": pokemon_errors}
+        )
+    )
     return response if not pokemon_errors else make_response(response, 206)
-    

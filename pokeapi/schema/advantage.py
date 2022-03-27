@@ -19,6 +19,7 @@ class ReqAdvantageTypesSchema(Schema):
 
 class ResAdvantageTypesSchema(Schema):
     """Expected res schema validations for advantages POST"""
+
     double_damage_to = fields.Boolean(required=True)
     half_damage_from = fields.Boolean(required=True)
     no_damage_from = fields.Boolean(required=True)

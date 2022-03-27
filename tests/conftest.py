@@ -1,5 +1,4 @@
 import pytest
-
 from flask import Blueprint, Flask
 from flask_restplus import Api
 
@@ -25,9 +24,11 @@ def app():
 
     app.register_blueprint(v1_blueprint)
 
-    app.config.update({
-        "TESTING": True,
-    })
+    app.config.update(
+        {
+            "TESTING": True,
+        }
+    )
     yield app
 
 

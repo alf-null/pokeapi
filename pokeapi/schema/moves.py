@@ -16,7 +16,9 @@ class ReqMovesInCommonSchema(Schema):
         in_data["pokemons"] = in_data["pokemons"].replace(" ", "").split(",")
         return in_data
 
+
 class ResMovesInCommonSchema(Schema):
     """Implements res schema validation for moves POST"""
+
     shared_moves = fields.List(fields.String())
     processing_erros = fields.List(fields.String())

@@ -32,7 +32,6 @@ def get_second_type():
 
 
 def test_example(client):
-    res = client.post("/api/v1/moves", data={
-        "first_type": "water",
-        "second_type": "fire"
-    })
+    res = client.post(
+        "/api/v1/moves", data={"first_type": "water", "second_type": "fire"}
+    )

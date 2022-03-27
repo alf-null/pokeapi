@@ -5,7 +5,7 @@ from sys import stderr
 from typing import Any, Dict
 
 import requests
-from flask import jsonify, make_response, Response
+from flask import Response, jsonify, make_response
 from flask_restplus.namespace import RequestParser
 
 from ..model.advantage import AdvantageTypes
@@ -32,7 +32,9 @@ logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)
 ch = logging.StreamHandler()
 ch.setLevel(logging.DEBUG)
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+formatter = logging.Formatter(
+    '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
 ch.setFormatter(formatter)
 logger.addHandler(ch)
 
@@ -61,7 +63,9 @@ def verify_types(data_model: AdvantageTypes) -> bool:
     return ret_value
 
 
-def verify_type_properties(data_model: AdvantageTypes) -> ResAdvantageTypesSchema:
+def verify_type_properties(
+    data_model: AdvantageTypes,
+) -> ResAdvantageTypesSchema:
     response = {}
     resgisted_types = f"{resource_path}/type_{data_model.first_type}.json"
     filename = os.path.join(dirname, resgisted_types)
