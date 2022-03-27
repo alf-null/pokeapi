@@ -1,7 +1,7 @@
 import json
+import logging
 import os
 from os import path
-from sys import stderr
 from typing import Any, Dict
 
 import requests
@@ -24,9 +24,6 @@ arg_parse.add_argument(
     location="form",
     help="Contains first pokemon move type",
 )
-
-
-import logging
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.DEBUG)

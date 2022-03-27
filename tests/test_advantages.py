@@ -35,3 +35,4 @@ def test_example(client):
     res = client.post(
         "/api/v1/moves", data={"first_type": "water", "second_type": "fire"}
     )
+    assert res
