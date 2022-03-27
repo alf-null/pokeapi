@@ -3,11 +3,22 @@ import os
 from typing import Any, Dict
 
 import requests
-from flask import jsonify
+from flask import jsonify, make_response
 from flask_restplus.namespace import RequestParser
 
 from ..model.moves import MovesInCommon
-from ..schema.moves import MovesInCommonSchema
+from ..schema.moves import ReqMovesInCommonSchema, ResMovesInCommonSchema
+
+import logging
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+ch = logging.StreamHandler()
+ch.setLevel(logging.DEBUG)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+ch.setFormatter(formatter)
+logger.addHandler(ch)
+
 
 arg_parse = RequestParser()
 arg_parse.add_argument(
@@ -44,7 +55,9 @@ def get_moves(file: str):
 
 
 def Post(args: Dict) -> Any:
-    schema = MovesInCommonSchema().load(args)
+    """Implement logic for matching moves on many pokemon"""    
+    logger.info(f"Moves post: {args}")
+    schema = ReqMovesInCommonSchema().load(args)
     data_model = MovesInCommon(**schema)
 
     pokemon_moves = []
@@ -62,11 +75,15 @@ def Post(args: Dict) -> Any:
         else:
             with requests.get(f"{pokeapi_base_uri}/pokemon/{pokemon}") as req:
                 if not req:
+                    logger.warning(f"Pokemon {pokemon} not found")
                     pokemon_errors.append(pokemon)
                     continue
-
-                with open(pokemon_file, "wb") as new_pokemon_file:
-                    new_pokemon_file.write(req.content)
+                
+                try:
+                    with open(pokemon_file, "wb") as new_pokemon_file:
+                        new_pokemon_file.write(req.content)
+                except OSError:
+                    return make_response(jsonify(message="File management error"), 500)
             moves = get_moves(pokemon_file)
             pokemon_moves.append(moves)
 
@@ -91,10 +108,7 @@ def Post(args: Dict) -> Any:
                     if name["language"]["name"] == data_model.lan:
                         common_moves[i] = name["name"]
 
-    return jsonify(
-        {
-            "shared_moves": common_moves,
-            "processing_erros": pokemon_errors,
-            "status_code": 200,
-        }
-    )
+    logger.info(f"Served response: {common_moves}")
+    response = jsonify(ResMovesInCommonSchema().dump({"shared_moves":common_moves, "processing_erros": pokemon_errors}))
+    return response if not pokemon_errors else make_response(response, 206)
+    

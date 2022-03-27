@@ -5,11 +5,11 @@ from sys import stderr
 from typing import Any, Dict
 
 import requests
-from flask import jsonify
+from flask import jsonify, make_response, Response
 from flask_restplus.namespace import RequestParser
 
 from ..model.advantage import AdvantageTypes
-from ..schema.advantage import AdvantageTypesSchema
+from ..schema.advantage import ReqAdvantageTypesSchema, ResAdvantageTypesSchema
 
 arg_parse = RequestParser()
 arg_parse.add_argument(
@@ -24,6 +24,18 @@ arg_parse.add_argument(
     location="form",
     help="Contains first pokemon move type",
 )
+
+
+import logging
+
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+ch = logging.StreamHandler()
+ch.setLevel(logging.DEBUG)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+ch.setFormatter(formatter)
+logger.addHandler(ch)
+
 
 resource_path = "../resources"
 dirname = os.path.dirname(__file__)
@@ -44,12 +56,12 @@ def verify_types(data_model: AdvantageTypes) -> bool:
                 ):
                     ret_value = True
     else:
-        print("Missing type list from resources", file=stderr)
+        logger.error("Missing type list from resources folder")
         ret_value = False
     return ret_value
 
 
-def verify_type_properties(data_model: AdvantageTypes) -> Dict:
+def verify_type_properties(data_model: AdvantageTypes) -> ResAdvantageTypesSchema:
     response = {}
     resgisted_types = f"{resource_path}/type_{data_model.first_type}.json"
     filename = os.path.join(dirname, resgisted_types)
@@ -63,7 +75,7 @@ def verify_type_properties(data_model: AdvantageTypes) -> Dict:
                 response["double_damage_to"] = True
                 break
         if "double_damage_to" not in response:
-            response["double_damage"] = False
+            response["double_damage_to"] = False
 
         # Search if the second attack type can half damage
         for attack_type in type_list["damage_relations"]["half_damage_from"]:
@@ -80,13 +92,14 @@ def verify_type_properties(data_model: AdvantageTypes) -> Dict:
                 break
         if "no_damage_from" not in response:
             response["no_damage_from"] = False
-    return response
+    return ResAdvantageTypesSchema().dump(response)
 
 
 def Post(args: Dict) -> Any:
     """Implements logic for assuming damage dealing advantage"""
+    logger.info(f"Advantage type post: {args}")
     response = None
-    schema = AdvantageTypesSchema().load(args)
+    schema = ReqAdvantageTypesSchema().load(args)
     data_model = AdvantageTypes(**schema)
 
     if verify_types(data_model):
@@ -105,6 +118,11 @@ def Post(args: Dict) -> Any:
                         with requests.get(type_item["url"]) as req:
                             with open(advantage_fp, "wb") as new_json:
                                 new_json.write(req.content)
-            response = verify_type_properties(data_model)
-        response["status_code"] = 200
-    return jsonify(response)
+            if path.exists(advantage_fp):
+                response = verify_type_properties(data_model)
+    else:
+        response = make_response(jsonify(message="type not found"), 404)
+    if not response:
+        response = make_response(jsonify(message="type not found"), 404)
+    logger.info(f"Served response: {response}")
+    return response if isinstance(response, Response) else jsonify(response)

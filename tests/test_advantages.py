@@ -31,11 +31,8 @@ def get_second_type():
     ]
 
 
-def test_advantages(test_app, get_first_type, get_second_type):
-    for first_type, second_type in zip(get_first_type, get_second_type):
-        a = test_app.post(
-            '/api/v1/advantages',
-            data={"first_type": first_type, "second_type": second_type},
-        )
-
-        print(a)
+def test_example(client):
+    res = client.post("/api/v1/moves", data={
+        "first_type": "water",
+        "second_type": "fire"
+    })

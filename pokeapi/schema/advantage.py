@@ -3,8 +3,8 @@ from marshmallow import Schema, fields, pre_load
 # Defines schema for validation
 
 
-class AdvantageTypesSchema(Schema):
-    """Implements schema validations for advantages POST"""
+class ReqAdvantageTypesSchema(Schema):
+    """Expected req schema validations for advantages POST"""
 
     first_type = fields.String(required=True)
     second_type = fields.String(required=True)
@@ -15,3 +15,10 @@ class AdvantageTypesSchema(Schema):
         in_data["first_type"] = in_data["first_type"].lower()
         in_data["second_type"] = in_data["second_type"].lower()
         return in_data
+
+
+class ResAdvantageTypesSchema(Schema):
+    """Expected res schema validations for advantages POST"""
+    double_damage_to = fields.Boolean(required=True)
+    half_damage_from = fields.Boolean(required=True)
+    no_damage_from = fields.Boolean(required=True)
